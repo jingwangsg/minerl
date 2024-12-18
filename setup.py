@@ -70,7 +70,7 @@ class BinaryDistribution(Distribution):
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
-def unpack_assets():
+def unpack_assets(workdir):
     asset_dir = None
     # get value of $GRADLE_USER_HOME
     gradle_user_home = os.environ.get('GRADLE_USER_HOME')
@@ -79,7 +79,8 @@ def unpack_assets():
         asset_dir = os.path.join(gradle_user_home, 'caches', 'forge_gradle', 'assets')
     else:
         # using default path
-        asset_dir = os.path.join(os.path.expanduser('~'), '.gradle', 'caches', 'forge_gradle', 'assets')
+        # asset_dir = os.path.join(os.path.expanduser('~'), '.gradle', 'caches', 'forge_gradle', 'assets')
+        asset_dir = os.path.join(workdir, "run", "assets")
     output_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'minerl', 'MCP-Reborn', 'src', 'main', 'resources')
     index = load_asset_index(os.path.join(asset_dir, 'indexes', '1.16.json'))
     unpack_assets_impl(index, asset_dir, output_dir)
@@ -202,7 +203,7 @@ def prep_mcp():
         else:
             break
 
-    unpack_assets()
+    unpack_assets(workdir)
     subprocess.check_call('{} clean build shadowJar'.format(gradlew).split(' '), cwd=workdir)
     if os.name == 'nt':
         os.chdir(old_dir)
